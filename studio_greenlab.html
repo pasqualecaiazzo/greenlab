@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenLab — Studio per l'orale</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --green: #1a6b3c;
+    --green-light: #e8f5ee;
+    --green-mid: #2d8a54;
+    --accent: #f0c040;
+    --red: #c0392b;
+    --red-light: #fdf0ee;
+    --bg: #f7f6f2;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #e0ddd6;
+    --code-bg: #1e2433;
+    --code-text: #a8d8a8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* SIDEBAR NAV */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--green);
+    color: white;
+    overflow-y: auto;
+    padding: 24px 0;
+    z-index: 100;
+  }
+
+  .sidebar-title {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 0 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 12px;
+  }
+
+  .sidebar-title span {
+    display: block;
+    font-size: 11px;
+    font-weight: 300;
+    opacity: 0.7;
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .sidebar a {
+    display: block;
+    padding: 8px 20px;
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    font-size: 13px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .sidebar a:hover {
+    color: white;
+    background: rgba(255,255,255,0.08);
+    border-left-color: var(--accent);
+  }
+
+  .sidebar a.section {
+    font-weight: 600;
+    color: white;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-top: 16px;
+    padding-bottom: 4px;
+    opacity: 0.5;
+    border-left-color: transparent !important;
+    background: none !important;
+  }
+
+  /* MAIN */
+  .main {
+    margin-left: 240px;
+    padding: 40px 48px;
+    max-width: 900px;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 48px;
+    font-weight: 300;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--green);
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--green-light);
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 24px 0 10px;
+  }
+
+  p { margin-bottom: 12px; font-size: 15px; }
+
+  /* CODE */
+  pre {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 16px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--code-text);
+  }
+
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    background: #edf2f0;
+    color: var(--green);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  /* TABLES */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+
+  th {
+    background: var(--green);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 500;
+  }
+
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td { background: var(--green-light); }
+
+  td code { font-size: 12px; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 16px 0;
+  }
+
+  /* QA */
+  .qa {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 12px 0;
+    overflow: hidden;
+  }
+
+  .qa-q {
+    padding: 16px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    background: var(--green-light);
+    color: var(--green);
+  }
+
+  .qa-q::before {
+    content: '▶';
+    font-size: 10px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .qa.open .qa-q::before { transform: rotate(90deg); }
+
+  .qa-a {
+    padding: 0 20px;
+    font-size: 14px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.2s;
+  }
+
+  .qa.open .qa-a {
+    max-height: 600px;
+    padding: 16px 20px;
+  }
+
+  /* ALERTS */
+  .alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin: 12px 0;
+    border-left: 4px solid;
+  }
+
+  .alert-green {
+    background: var(--green-light);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .alert-red {
+    background: var(--red-light);
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .alert-yellow {
+    background: #fffbea;
+    border-color: #d4a017;
+    color: #7a5c00;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .badge-green { background: var(--green); color: white; }
+  .badge-yellow { background: var(--accent); color: #1a1a1a; }
+
+  ul, ol { padding-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 6px; font-size: 15px; }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin: 10px 0;
+    font-size: 14px;
+  }
+
+  .step-num {
+    background: var(--green);
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  @media print {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+    .qa-a { max-height: none !important; padding: 16px 20px !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-title">GreenLab <span>Studio per l'orale</span></div>
+  <a href="#progetto">Il progetto</a>
+  <a href="#file">Struttura file</a>
+  <a href="#database">Database</a>
+  <a class="section" href="#">Core PHP</a>
+  <a href="#config">config.php</a>
+  <a href="#register">register.php</a>
+  <a href="#login">login.php</a>
+  <a href="#logout">logout.php</a>
+  <a href="#home">paginahome.php</a>
+  <a href="#profilo">profilo.php</a>
+  <a class="section" href="#">Ricerca</a>
+  <a href="#ricerca1">ricerca1.php</a>
+  <a href="#ricerca2">ricerca2.php</a>
+  <a href="#dettaglio">dettaglio_pianta.php</a>
+  <a class="section" href="#">Admin</a>
+  <a href="#admin-login">admin_login.php</a>
+  <a href="#admin-aggiungi">Aggiungi pianta</a>
+  <a href="#admin-aggiorna">Modifica pianta</a>
+  <a href="#admin-cancella">Elimina pianta/utente</a>
+  <a class="section" href="#">Teoria</a>
+  <a href="#concetti">Concetti chiave</a>
+  <a href="#orale">Domande all'orale</a>
+</nav>
+
+<div class="main">
+
+  <h1>GreenLab</h1>
+  <p class="subtitle">Documento di studio per l'esame orale — Sviluppo Software 2026</p>
+
+  <!-- PROGETTO -->
+  <h2 id="progetto">Cos'è il progetto</h2>
+  <p>GreenLab è un sito PHP con database MySQL per la consultazione di un catalogo di piante all'ingrosso. L'accesso è riservato agli operatori registrati (fioristi, garden center, rivenditori). C'è anche un'area amministratore separata per gestire il catalogo e gli utenti.</p>
+  <div class="alert alert-green">L'amministratore usa credenziali hardcoded nel codice (<code>admin / admin1234</code>), come richiesto dai requisiti ("credenziali predefinite"). La sessione admin è separata da quella utente.</div>
+
+  <!-- FILE -->
+  <h2 id="file">Struttura dei file</h2>
+  <table>
+    <tr><th>File</th><th>Cosa fa</th></tr>
+    <tr><td><code>config.php</code></td><td>Connessione al DB e funzioni controllo sessione</td></tr>
+    <tr><td><code>database.sql</code></td><td>Crea le tabelle e inserisce dati di esempio</td></tr>
+    <tr><td><code>index.php</code></td><td>Pagina pubblica — unica senza login</td></tr>
+    <tr><td><code>register.php</code></td><td>Registrazione utente</td></tr>
+    <tr><td><code>login.php</code></td><td>Login utente</td></tr>
+    <tr><td><code>logout.php</code></td><td>Chiude la sessione</td></tr>
+    <tr><td><code>paginahome.php</code></td><td>Home utente loggato</td></tr>
+    <tr><td><code>profilo.php</code></td><td>Dati personali e cambio password</td></tr>
+    <tr><td><code>ricerca1.php</code></td><td>Passo 1: scelta categoria</td></tr>
+    <tr><td><code>ricerca2.php</code></td><td>Passo 2: scelta piante</td></tr>
+    <tr><td><code>dettaglio_pianta.php</code></td><td>Dettaglio piante selezionate</td></tr>
+    <tr><td><code>admin_login.php</code></td><td>Login admin (credenziali hardcoded)</td></tr>
+    <tr><td><code>admin_paginahome.php</code></td><td>Pannello di controllo admin</td></tr>
+    <tr><td><code>admin_aggiungipianta.php</code></td><td>Admin: aggiunge pianta</td></tr>
+    <tr><td><code>admin_aggiornapianta.php</code></td><td>Admin: modifica pianta (2 fasi)</td></tr>
+    <tr><td><code>admin_cancellapianta.php</code></td><td>Admin: elimina pianta</td></tr>
+    <tr><td><code>admin_cancellautente.php</code></td><td>Admin: elimina utente</td></tr>
+  </table>
+
+  <!-- DATABASE -->
+  <h2 id="database">Il database</h2>
+  <p>Database: <code>greenlab</code> — 2 tabelle.</p>
+
+  <h3>Tabella <code>utenti</code></h3>
+  <pre><code>CREATE TABLE utenti (
+  username VARCHAR(100) NOT NULL,
+  cognome  VARCHAR(100) NOT NULL,
+  email    VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  PRIMARY KEY (username)
+);</code></pre>
+  <ul>
+    <li><strong>Chiave primaria: <code>username</code></strong> — come richiesto dai requisiti</li>
+    <li><code>email</code> ha <code>UNIQUE</code> → non possono esistere due utenti con la stessa email</li>
+    <li>Solo i campi richiesti dai requisiti — niente telefono, ragione sociale, partita IVA</li>
+  </ul>
+
+  <h3>Tabella <code>piante</code></h3>
+  <pre><code>CREATE TABLE piante (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  nome        VARCHAR(200)  NOT NULL,
+  tipo        VARCHAR(100)  NOT NULL,
+  descrizione TEXT          NOT NULL,
+  prezzo      DECIMAL(10,2) NOT NULL
+);</code></pre>
+  <ul>
+    <li><code>id</code> generato automaticamente (<code>AUTO_INCREMENT</code>)</li>
+    <li><code>tipo</code> è il campo usato per raggruppare le categorie — fondamentale per la ricerca a due passi</li>
+    <li><code>DECIMAL(10,2)</code> = massimo 10 cifre totali, 2 decimali</li>
+  </ul>
+
+  <!-- CONFIG -->
+  <h2 id="config">config.php — La base di tutto</h2>
+  <pre><code>$conn = mysqli_connect($host, $user, $pass, $db);</code></pre>
+  <p>Apre la connessione al database. <code>$conn</code> viene usato in tutti gli altri file per le query.</p>
+
+  <pre><code>function controllaSessione() {
+    if (!isset($_SESSION["username"])) {
+        header("Location: login.php");
+        exit;
+    }
+}</code></pre>
+  <p>Chiamata all'inizio di ogni pagina riservata. Se non esiste <code>$_SESSION["username"]</code>, redirect al login. <strong><code>exit</code> è fondamentale</strong>: ferma l'esecuzione del resto della pagina.</p>
+
+  <pre><code>function controllaSessioneAdmin() {
+    if (!isset($_SESSION["admin"])) {
+        header("Location: login.php");
+        exit;
+    }
+}</code></pre>
+  <p>Stessa logica per le pagine admin. Controlla <code>$_SESSION["admin"]</code>.</p>
+
+  <!-- REGISTER -->
+  <h2 id="register">register.php — Registrazione</h2>
+  <p>Campi: cognome, username, email, password, conferma password.</p>
+  <h3>Controlli in ordine</h3>
+  <div class="step"><div class="step-num">1</div><div>Campi obbligatori compilati → <code>"Mancano dei campi obbligatori."</code></div></div>
+  <div class="step"><div class="step-num">2</div><div>Password ≥ 8 caratteri → <code>"Password troppo corta, minimo 8 caratteri."</code></div></div>
+  <div class="step"><div class="step-num">3</div><div>Le due password coincidono → <code>"Le due password non sono uguali."</code></div></div>
+  <div class="step"><div class="step-num">4</div><div>Email non già in uso → <code>"Questa email è già in uso."</code></div></div>
+  <div class="step"><div class="step-num">5</div><div>Username non già in uso → <code>"Username già preso, scegline un altro."</code></div></div>
+
+  <pre><code>$sql_registra = "INSERT INTO utenti (username, cognome, email, password)
+                 VALUES (\"$username\", \"$cognome\", \"$email\", \"$pwd\")";
+
+if (mysqli_query($conn, $sql_registra)) {
+    $successo = "Registrazione ok! Puoi fare il login.";
+}</code></pre>
+
+  <!-- LOGIN -->
+  <h2 id="login">login.php — Accesso utente</h2>
+  <pre><code>$sql_login = "SELECT username FROM utenti
+              WHERE username = \"$usr\" AND password = \"$pwd\"";
+$ris = mysqli_query($conn, $sql_login);
+
+if (mysqli_num_rows($ris) == 1) {
+    $_SESSION["username"] = $usr;
+    header("Location: paginahome.php");
+    exit;
+}</code></pre>
+  <p>Se trova esattamente 1 riga → login ok, salva username in sessione, redirect home. Se l'utente è già loggato (<code>isset($_SESSION["username"])</code>), viene mandato direttamente alla home senza mostrare il form.</p>
+
+  <!-- LOGOUT -->
+  <h2 id="logout">logout.php — Fine sessione</h2>
+  <pre><code>session_start();
+session_destroy();
+header("Location: login.php");
+exit;</code></pre>
+  <p><code>session_destroy()</code> elimina completamente la sessione. Linkato in tutte le pagine.</p>
+
+  <!-- HOME -->
+  <h2 id="home">paginahome.php — Home utente</h2>
+  <pre><code>session_start();
+require 'config.php';
+controllaSessione();</code></pre>
+  <p>Questo blocco iniziale è uguale in <strong>tutte le pagine protette</strong>. Il saluto usa lo username dalla sessione:</p>
+  <pre><code>&lt;h1&gt;Ciao, &lt;?= $_SESSION["username"] ?&gt;!&lt;/h1&gt;</code></pre>
+
+  <!-- PROFILO -->
+  <h2 id="profilo">profilo.php — Dati e cambio password</h2>
+  <pre><code>$sql_profilo = "SELECT cognome, username, email
+                FROM utenti WHERE username = \"$username\"";
+$dati_utente = mysqli_fetch_assoc(mysqli_query($conn, $sql_profilo));</code></pre>
+  <p>Mostra: cognome, username, email. Cambio password:</p>
+  <pre><code>// Verifica vecchia password
+$sql_check = "SELECT username FROM utenti
+              WHERE username = \"$username\" AND password = \"$pw_attuale\"";
+
+if (mysqli_num_rows(mysqli_query($conn, $sql_check)) == 1) {
+    $sql_aggiorna = "UPDATE utenti SET password = \"$pw_nuova\"
+                     WHERE username = \"$username\"";
+    mysqli_query($conn, $sql_aggiorna);
+}</code></pre>
+  <p>Controlli: campi compilati → password nuova ≥ 8 car. → le due password coincidono → vecchia password corretta → UPDATE.</p>
+
+  <!-- RICERCA -->
+  <h2 id="ricerca1">La ricerca a due passi</h2>
+  <div class="alert alert-yellow">Si chiama "a due passi" perché prima si sceglie la categoria, poi si scelgono le piante. Il dettaglio è il risultato finale, non un passo di ricerca.</div>
+
+  <h3 id="ricerca1">Passo 1 — ricerca1.php: scelta categoria</h3>
+  <pre><code>$sql_categorie = "SELECT DISTINCT tipo FROM piante ORDER BY tipo";
+$ris           = mysqli_query($conn, $sql_categorie);</code></pre>
+  <p><code>SELECT DISTINCT</code> restituisce ogni categoria una sola volta. Il menu si aggiorna automaticamente — non è hardcoded. Form con metodo <code>GET</code>: manda a <code>ricerca2.php?tipo=Piante+da+interno</code>.</p>
+
+  <h3 id="ricerca2">Passo 2 — ricerca2.php: selezione piante</h3>
+  <pre><code>$tipo = $_GET["tipo"];
+
+if ($tipo == "") {
+    header("Location: ricerca1.php");
+    exit;
+}
+
+$sql_piante = "SELECT id, nome FROM piante WHERE tipo = \"$tipo\" ORDER BY nome";</code></pre>
+  <p>Se manca il tipo nell'URL → redirect al passo 1. Mostra solo nome e id con checkbox. Quando inviato:</p>
+  <pre><code>if (!isset($_POST["id"])) {
+    $errore = "Devi scegliere almeno una pianta.";
+} else {
+    $_SESSION["ids_selezionati"] = $_POST["id"];
+    header("Location: dettaglio_pianta.php");
+    exit;
+}</code></pre>
+
+  <h3 id="dettaglio">dettaglio_pianta.php: visualizzazione completa</h3>
+  <pre><code>if (!isset($_SESSION["ids_selezionati"])) {
+    header("Location: ricerca1.php");
+    exit;
+}
+
+$ids = $_SESSION["ids_selezionati"];
+
+foreach ($ids as $id) {
+    $id = (int)$id;
+    $sql_pianta = "SELECT * FROM piante WHERE id = $id";
+    $ris        = mysqli_query($conn, $sql_pianta);
+    if (mysqli_num_rows($ris) == 1) {
+        $riga = mysqli_fetch_assoc($ris);
+        // stampa nome, tipo, descrizione, prezzo
+    }
+}</code></pre>
+
+  <!-- ADMIN -->
+  <h2 id="admin-login">Area amministratore</h2>
+
+  <h3>admin_login.php</h3>
+  <pre><code>if ($usr == "admin" && $pwd == "admin1234") {
+    $_SESSION["admin"] = true;
+    header("Location: admin_paginahome.php");
+    exit;
+}</code></pre>
+  <p>Credenziali hardcoded. La sessione admin usa <code>$_SESSION["admin"]</code> (booleano), separata da <code>$_SESSION["username"]</code>.</p>
+
+  <h3 id="admin-aggiungi">admin_aggiungipianta.php</h3>
+  <pre><code>if ($nome == "" || $tipo_pianta == "" || $desc == "" || $prz == "") {
+    $feedback = "Tutti i campi sono obbligatori.";
+} elseif ($prz <= 0) {
+    $feedback = "Il prezzo non va bene.";
+} else {
+    $sql = "INSERT INTO piante (nome, tipo, descrizione, prezzo)
+            VALUES (\"$nome\", \"$tipo_pianta\", \"$desc\", \"$prz\")";
+    mysqli_query($conn, $sql);
+}</code></pre>
+
+  <h3 id="admin-aggiorna">admin_aggiornapianta.php — 2 fasi</h3>
+  <p><strong>Fase 1</strong> — pulsante "Modifica" (<code>$_POST["scegli"]</code>): recupera i dati della pianta scelta.</p>
+  <p><strong>Fase 2</strong> — pulsante "Salva" (<code>$_POST["salva"]</code>): aggiorna il database.</p>
+  <pre><code>if (isset($_POST["scegli"])) {
+    $id = (int)$_POST["id"];
+    $sql = "SELECT * FROM piante WHERE id = $id";
+    $pianta = mysqli_fetch_assoc(mysqli_query($conn, $sql));
+}
+
+if (isset($_POST["salva"])) {
+    $sql = "UPDATE piante SET nome=\"$nome\", tipo=\"$cat\",
+            descrizione=\"$desc\", prezzo=\"$prz\" WHERE id = $id";
+    mysqli_query($conn, $sql);
+}</code></pre>
+  <p>La categoria nel form è precompilata con quella attuale usando <code>selected</code> sull'<code>option</code> corrispondente.</p>
+
+  <h3 id="admin-cancella">admin_cancellapianta.php / admin_cancellautente.php</h3>
+  <pre><code>// Elimina pianta
+$id = (int)$_POST["id"];
+$sql = "DELETE FROM piante WHERE id = $id";
+
+// Elimina utente
+$usr = $_POST["username"];
+$sql = "DELETE FROM utenti WHERE username = \"$usr\"";</code></pre>
+  <p>Entrambe mostrano la lista con radiobox e cancellano l'elemento selezionato. Lo username è la chiave primaria della tabella utenti.</p>
+
+  <!-- CONCETTI -->
+  <h2 id="concetti">Concetti chiave da saper spiegare</h2>
+
+  <div class="card">
+    <h3>Le sessioni PHP</h3>
+    <p>Mantengono dati tra una pagina e l'altra. Il server crea un ID univoco per ogni utente, salvato in un cookie nel browser. I dati stanno lato server.</p>
+    <ul>
+      <li><code>session_start()</code> — obbligatorio all'inizio di ogni pagina che usa le sessioni, prima di qualsiasi output HTML</li>
+      <li><code>$_SESSION["chiave"] = valore</code> — salva un dato</li>
+      <li><code>isset($_SESSION["chiave"])</code> — controlla se esiste</li>
+      <li><code>session_destroy()</code> — elimina tutta la sessione (logout)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Flusso delle query MySQL in PHP</h3>
+    <pre><code>$sql = "SELECT * FROM piante WHERE tipo = \"Succulente e Cactus\"";
+$ris = mysqli_query($conn, $sql);       // esegue
+mysqli_num_rows($ris);                  // quante righe
+while ($riga = mysqli_fetch_assoc($ris)) {
+    echo $riga["nome"];                 // legge riga per riga
+}</code></pre>
+  </div>
+
+  <div class="card">
+    <h3>GET vs POST</h3>
+    <ul>
+      <li><strong>GET</strong>: dati nell'URL (<code>ricerca2.php?tipo=Lavanda</code>). Usato per ricerca1→ricerca2 perché la categoria è nell'URL e si può navigare col tasto indietro.</li>
+      <li><strong>POST</strong>: dati nel corpo della richiesta, invisibili nell'URL. Usato per login, registrazione, e tutte le operazioni che modificano il database (INSERT, UPDATE, DELETE).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3><code>$_SERVER["REQUEST_METHOD"] == "POST"</code></h3>
+    <p>Molte pagine gestiscono sia la visualizzazione del form (GET) che l'elaborazione dei dati (POST). Questo controllo distingue i due casi: se la pagina è stata aperta normalmente mostra il form, se è stata inviata elabora i dati.</p>
+  </div>
+
+  <div class="card">
+    <h3>Il cast a intero <code>(int)</code></h3>
+    <pre><code>$id = (int)$_POST["id"];</code></pre>
+    <p>Converte l'id in intero prima di usarlo in una query. Garantisce che sia sempre un numero, eliminando qualsiasi testo o carattere speciale al posto di un id.</p>
+  </div>
+
+  <div class="card">
+    <h3><code>SELECT DISTINCT</code></h3>
+    <pre><code>SELECT DISTINCT tipo FROM piante ORDER BY tipo</code></pre>
+    <p>Restituisce ogni valore di <code>tipo</code> una sola volta, anche se ci sono molte piante della stessa categoria. Il menu categorie si aggiorna automaticamente — non è hardcoded.</p>
+  </div>
+
+  <div class="card">
+    <h3>Perché <code>exit</code> dopo <code>header()</code></h3>
+    <p><code>header()</code> da solo non ferma il codice PHP — imposta solo l'intestazione HTTP di redirect. Senza <code>exit</code>, tutto il codice successivo continua ad essere eseguito. <code>exit</code> ferma tutto immediatamente.</p>
+  </div>
+
+  <div class="card">
+    <h3>Perché <code>isset()</code> e non solo <code>if()</code></h3>
+    <p><code>isset()</code> controlla sia che la variabile esista sia che non sia null. Se usassi <code>if($_SESSION["username"])</code> e la variabile non esistesse, PHP genererebbe un warning. Con <code>isset()</code> il controllo è sicuro.</p>
+  </div>
+
+  <!-- ORALE -->
+  <h2 id="orale">Domande all'orale</h2>
+  <p style="margin-bottom:16px; color:var(--muted); font-size:14px;">Clicca su ogni domanda per vedere la risposta.</p>
+
+  <div class="qa" onclick="this.classList.toggle('open')">
+    <div class="qa-q">Come funziona il login?</div>
+    <div class="qa-a"><p>L'utente inserisce username e password nel form. Il PHP fa una query che cerca nella tabella utenti un record con quell'username E quella password. Se trova esattamente 1 riga, salva lo username nella sessione e reindirizza alla home. Altrimenti mostra un messaggio di errore.</p></div>
+  </div>
+
+  <div class="qa" onclick="this.classList.toggle('open')">
+    <div class="qa-q">Come impedisci a un utente non loggato di accedere alle pagine riservate?</div>
+    <div class="qa-a"><p>All'inizio di ogni pagina riservata chiamo <code>controllaSessione()</code>. Quella funzione controlla se esiste <code>$_SESSION["username"]</code>. Se non esiste, fa un redirect a <code>login.php</code> e si ferma con <code>exit</code>. Senza <code>exit</code>, il resto del codice continuerebbe ad essere eseguito.</p></div>
+  </div>
+
+  <div class="qa" onclick="this.classList.toggle('open')">
+    <div class="qa-q">Come funziona la ricerca a due passi?</div>
+    <div class="qa-a"><p>Prima l'utente sceglie una categoria da un menu generato dinamicamente con <code>SELECT DISTINCT tipo</code>. Poi vede la lista delle piante di quella categoria con le checkbox, ne sceglie una o più e gli id selezionati vengono salvati nella sessione. Nella pagina di dettaglio, per ogni id viene fatta una query e si mostra la scheda completa con nome, categoria, descrizione e prezzo.</p></div>
+  </div>
+
+  <div class="qa" onclick="this.classList.toggle('open')">
+    <div class="qa-q">Come fa l'admin ad aggiornare una pianta?</div>
+    <div class="qa-a"><p>La pagina ha due fasi. Prima mostra la lista di tutte le piante con radiobox. Quando si preme "Modifica", fa una query per recuperare i dati attuali e mostra un form precompilato. Quando si preme "Salva" esegue un UPDATE nel database con i nuovi valori. Le due fasi si distinguono controllando quale pulsante è stato premuto con <code>isset($_POST["scegli"])</code> e <code>isset($_POST["salva"])</code>.</p></div>
+  </div>
+
+  <div class="qa" onclick="this.classList.toggle('open')">
+    <div class="qa-q">Perché le password non sono criptate?</div>
+    <div class="qa-a"><p>Non è stato trattato a lezione. So che PHP ha funzioni come <code>password_hash()</code> e <code>password_verify()</code> per gestire l'hashing in modo sicuro, ma non rientrava nel programma del corso.</p></div>
+  </div>
+
+  <div class="qa" onclick="this.classList.toggle('open')">
+    <div class="qa-q">Cosa succede se un utente cerca di accedere a una pagina admin?</div>
+    <div class="qa-a"><p><code>controllaSessioneAdmin()</code> controlla se esiste <code>$_SESSION["admin"]</code>. Se non esiste, reindirizza a <code>login.php</code> e blocca l'esecuzione con <code>exit</code>. Senza sessione admin attiva, nessuna pagina del pannello è accessibile.</p></div>
+  </div>
+
+  <div class="qa" onclick="this.classList.toggle('open')">
+    <div class="qa-q">Come gestisci il caso in cui nessuna pianta venga trovata?</div>
+    <div class="qa-a"><p>In <code>ricerca2.php</code> controllo <code>mysqli_num_rows($ris)</code>. Se è 0 mostro il messaggio "Nessuna pianta trovata per questa categoria" e un link per tornare al passo 1. La stessa logica si applica nelle pagine admin quando non ci sono piante o utenti da gestire.</p></div>
+  </div>
+
+  <div class="qa" onclick="this.classList.toggle('open')">
+    <div class="qa-q">Cosa fa session_destroy()?</div>
+    <div class="qa-a"><p>Elimina completamente la sessione sul server — tutti i dati salvati in <code>$_SESSION</code> vengono cancellati. Dopo questa chiamata l'utente non è più autenticato. Il cookie nel browser rimane ma è inutile perché i dati lato server non esistono più.</p></div>
+  </div>
+
+  <div class="qa" onclick="this.classList.toggle('open')">
+    <div class="qa-q">Perché usi GET per la ricerca categoria e POST per il login?</div>
+    <div class="qa-a"><p>Con GET la categoria finisce nell'URL, quindi l'utente può tornare indietro col browser e la pagina è navigabile normalmente. Per il login uso POST perché le credenziali non devono essere visibili nell'URL e non devono essere reinviate se si aggiorna la pagina.</p></div>
+  </div>
+
+  <div class="qa" onclick="this.classList.toggle('open')">
+    <div class="qa-q">Come funziona il controllo della chiave primaria username?</div>
+    <div class="qa-a"><p>In fase di registrazione faccio una SELECT per verificare che l'username non sia già presente. Se <code>mysqli_num_rows()</code> restituisce un valore maggiore di 0, l'username è già in uso e mostro un errore. La PRIMARY KEY nel database garantisce anche a livello di database che non esistano duplicati.</p></div>
+  </div>
+
+  <br><br>
+
+</div>
+
+</body>
+</html>
